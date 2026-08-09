@@ -6,25 +6,32 @@ import Section from "@/components/Section.astro";
 import BlogPostCard from "@/components/BlogPostCard.astro";
 import Layout from "@/layouts/Layout.astro";
 import { KNOWN_TECH, ABOUT_ME } from "@/consts";
-const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+
+// 1. Pobieramy wpisy z obu kolekcji
+const blogPosts = await getCollection("blog");
+const necessePosts = await getCollection("necesse");
+
+// 2. Łączymy je, sortujemy od najnowszego i ucinamy do 4 sztuk (możesz zmienić liczbę w .slice)
+const latestPosts = [...blogPosts, ...necessePosts]
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4); 
 ---
 
 <Layout title="TowarzyszFatCat | ChonkChum">
   <Hero />
   <Section
-    title="My Posts"
+    title="Latest Posts"
     className={"bg-gradient-to-b from-black/70 from-[5%] to-black via-black"}
   >
     <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
       {
-        posts.map((post) => (
+        latestPosts.map((post) => (
           <BlogPostCard
             slug={post.id}
             title={post.data.title}
             excerpt={post.data.description}
             date={post.data.pubDate}
+            collection={post.collection} // 3. Przekazujemy nazwę kolekcji do karty!
           />
         ))
       }
