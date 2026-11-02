@@ -1,0 +1,184 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Section from "@/components/Section.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import { GITHUB_USERNAME } from "@/consts";
+
+const REPO_NAME = "Pioneers-Spaghetti-Solver";
+const REPO_URL = `https://github.com/${GITHUB_USERNAME}/${REPO_NAME}`;
+
+let stars = 0;
+let forks = 0;
+let latestVersion = "v1.0";
+let downloadUrl = `${REPO_URL}/releases`;
+
+try {
+  const repoRes = await fetch(
+    `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}`,
+  );
+  if (repoRes.ok) {
+    const repoData = await repoRes.json();
+    stars = repoData.stargazers_count ?? 0;
+    forks = repoData.forks_count ?? 0;
+  }
+
+  const releaseRes = await fetch(
+    `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/releases/latest`,
+  );
+  if (releaseRes.ok) {
+    const releaseData = await releaseRes.json();
+    latestVersion = releaseData.tag_name ?? latestVersion;
+    downloadUrl = releaseData.html_url ?? downloadUrl;
+  }
+} catch (e) {
+  console.error("Failed to fetch GitHub stats for Pioneers-Spaghetti-Solver:", e);
+}
+
+const features = [
+  {
+    tag: "SOLVER ENGINE",
+    title: "Zero-Spaghetti Production",
+    desc: "Plan and calculate complex Satisfactory production chains from raw ores to Phase 5 onderdelen such as Nuclear Pasta, Ficsonium Fuel Rods, and Ballistic Warp Drives.",
+  },
+  {
+    tag: "FULL 1.0+ DATABASE",
+    title: "All Machines & Logistics",
+    desc: "Includes data and icons for Smelters, Constructors, Assemblers, Manufacturers, Refineries, Blenders, Particle Accelerators, Quantum Encoders, Converters, Conveyor Belts Mk.1-Mk.6, and Pipelines.",
+  },
+  {
+    tag: "GODOT ENGINE",
+    title: "Fast Native & Cross-Platform",
+    desc: "Built with Godot Engine for a responsive, lightweight node/graph interface without browser lag on massive megafactory layouts.",
+  },
+  {
+    tag: "GLOBAL I18N",
+    title: "50+ Languages Supported",
+    desc: "Ships with built-in localization files (including Polish, English, German, French, Japanese, Korean, and Chinese) ready out of the box.",
+  },
+];
+
+const supportedMachines = [
+  "Smelter",
+  "Foundry",
+  "Constructor",
+  "Assembler",
+  "Manufacturer",
+  "Refinery",
+  "Packager",
+  "Blender",
+  "Particle Accelerator",
+  "Quantum Encoder",
+  "Converter",
+  "AWESOME Sink",
+  "Dimensional Depot",
+  "Alien Power Augmenter",
+];
+---
+
+<Layout
+  title="Pioneers' Spaghetti Solver | ChonkChum"
+  description="Open-source Satisfactory factory planner and production calculator built in Godot Engine."
+>
+  <Section title="Pioneers Spaghetti Solver">
+    <div class="max-w-4xl mx-auto">
+      <!-- Główne okno terminala z opisem projektu -->
+      <div
+        class="w-full bg-gradient-to-br from-white/[0.001] to-white/[0.02] border-2 border-white rounded-lg overflow-hidden mb-8"
+      >
+        <div
+          class="flex items-center justify-between px-4 py-2 bg-white/95 text-black"
+        >
+          <div class="flex space-x-2">
+            <div class="w-3 h-3 rounded-full bg-black"></div>
+            <div class="w-3 h-3 rounded-full bg-black"></div>
+            <div class="w-3 h-3 rounded-full bg-black"></div>
+          </div>
+          <span class="text-xs font-bold uppercase tracking-widest">
+            SATISFACTORY FACTORY PLANNER // {latestVersion}
+          </span>
+        </div>
+
+        <div class="p-6 md:p-8 text-center">
+          <p class="text-lg md:text-xl text-white/90 mb-6">
+            Say goodbye to tangled conveyor belts. Plan, calculate, and optimize
+            your <span class="underline">Satisfactory</span> production lines with
+            an open-source factory solver built in Godot.
+          </p>
+
+          <div class="flex flex-wrap justify-center gap-4">
+            <a
+              href={downloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="bg-white text-black px-6 py-3 rounded font-bold text-sm hover:bg-black hover:text-white border-2 border-white transition-all"
+            >
+              Download ({latestVersion})
+            </a>
+            <a
+              href={REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-6 py-3 rounded font-bold text-sm border-2 border-white hover:bg-white hover:text-black transition-all"
+            >
+              GitHub Repository
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pasek statystyk projektu -->
+      <div
+        class="w-full mb-10 border-2 border-white rounded-lg p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center bg-white/[0.02]"
+      >
+        <div>
+          <div class="text-xs text-white/60">ENGINE</div>
+          <div class="text-2xl font-bold">GODOT</div>
+        </div>
+        <div>
+          <div class="text-xs text-white/60">LANGUAGES (I18N)</div>
+          <div class="text-2xl font-bold">55</div>
+        </div>
+        <div>
+          <div class="text-xs text-white/60">GITHUB STARS</div>
+          <div class="text-2xl font-bold">{stars}</div>
+        </div>
+        <div>
+          <div class="text-xs text-white/60">FORKS</div>
+          <div class="text-2xl font-bold">{forks}</div>
+        </div>
+      </div>
+
+      <!-- Siatka głównych funkcji w kartach terminalowych -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+        {
+          features.map((feat) => (
+            <div class="border-2 border-white rounded-lg overflow-hidden bg-white/[0.01]">
+              <div class="flex items-center justify-between px-4 py-2 bg-white/95 text-black">
+                <div class="flex space-x-2">
+                  <div class="w-3 h-3 rounded-full bg-black" />
+                  <div class="w-3 h-3 rounded-full bg-black" />
+                  <div class="w-3 h-3 rounded-full bg-black" />
+                </div>
+                <span class="text-xs font-bold tracking-widest">
+                  {feat.tag}
+                </span>
+              </div>
+              <div class="p-6">
+                <h3 class="text-xl font-bold mb-2">{`> ${feat.title}`}</h3>
+                <p class="text-sm text-white/80 leading-relaxed">{feat.desc}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Lista obsługiwanych maszyn z gry -->
+      <div class="text-center">
+        <h3 class="text-2xl mb-6">{`<Supported Buildings & Tech />`}</h3>
+        <div class="flex flex-wrap gap-3 justify-center">
+          {supportedMachines.map((machine) => <Breadcrumb title={machine} />)}
+        </div>
+      </div>
+    </div>
+  </Section>
+</Layout>
