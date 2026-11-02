@@ -1,21 +1,62 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import BaseHead from "@/components/BaseHead.astro";
 import Navbar from "@/components/Navbar.astro";
 import Footer from "@/components/Footer.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
 
-const { title = SITE_TITLE, description = SITE_DESCRIPTION, image } = Astro.props;
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  image,
+} = Astro.props;
 ---
 
 <html lang="en" class="!overflow-x-hidden">
   <head>
-    <BaseHead description="{description}" image="{image}" title="{title}"/>
+    <BaseHead title={title} description={description} image={image} />
   </head>
-
   <body class="bg-black text-white tracking-wide !overflow-x-hidden">
     <header class="fixed top-0 w-screen z-[9999]"><Navbar /></header>
     <main class="pt-28 md:pt-20"><slot /></main>
     <footer class="w-screen bottom-0 overflow-x-hidden"><Footer /></footer>
+
+    <script is:inline>
+      const konami = [
+        "ArrowUp",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowLeft",
+        "ArrowRight",
+        "b",
+        "a",
+      ];
+      let konamiIdx = 0;
+
+      window.addEventListener("keydown", (e) => {
+        const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        if (key === konami[konamiIdx]) {
+          konamiIdx++;
+          if (konamiIdx === konami.length) {
+            document.body.classList.toggle("phosphor-green");
+            konamiIdx = 0;
+          }
+        } else {
+          konamiIdx = 0;
+        }
+      });
+
+      let originalTitle = document.title;
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          originalTitle = document.title;
+          document.title = "[AFK // TRAMPLING PAUSED]";
+        } else {
+          document.title = originalTitle;
+        }
+      });
+    </script>
   </body>
 </html>

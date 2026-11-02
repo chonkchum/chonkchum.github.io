@@ -7,28 +7,11 @@
 
 body {
   font-family: "VCR", monospace !important;
-  background-color: #000;
-  color: #00ff66;
+  animation: crt-text-flicker 5s infinite;
 }
 
-
-body::after {
-  content: " ";
-  display: block;
-  position: fixed;
-  top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 99999;
-  background-size: 100% 4px, 6px 100%;
-  pointer-events: none;
-}
-
-
-h1, h2, h3, a, p {
-  text-shadow: 0 0 2px rgba(255, 255, 255, 0.4);
-}
-
-pre, code {
+pre,
+code {
   font-family: "VCR", monospace !important;
   font-weight: 100;
 }
@@ -55,18 +38,135 @@ pre, code {
   background: #fff;
 }
 
-img, .no-selection {
+img,
+.no-selection {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
+  -webkit-user-drag: none;
 }
 
 .hero-bg {
   z-index: -1;
   width: 100vw;
   word-wrap: break-word;
-  opacity: 0.03;
+  opacity: 0.02;
   font-size: 3rem;
   user-select: none;
+}
+
+body:not(.crt-off)::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.04),
+      rgba(0, 255, 0, 0.015),
+      rgba(0, 0, 255, 0.04)
+    );
+  background-size:
+    100% 4px,
+    6px 100%;
+  z-index: 99999;
+  pointer-events: none;
+  animation:
+    crt-scanlines 0.8s linear infinite,
+    crt-flicker 0.15s infinite;
+}
+
+body:not(.crt-off)::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -20vh;
+  height: 18vh;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.045) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 99998;
+  pointer-events: none;
+  animation: crt-beam 7s linear infinite;
+}
+
+@keyframes crt-scanlines {
+  0% {
+    background-position:
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      0 16px,
+      0 0;
+  }
+}
+
+@keyframes crt-beam {
+  0% {
+    transform: translateY(-20vh);
+  }
+  100% {
+    transform: translateY(125vh);
+  }
+}
+
+@keyframes crt-flicker {
+  0% {
+    opacity: 0.92;
+  }
+  50% {
+    opacity: 0.84;
+  }
+  100% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes crt-text-flicker {
+  0%,
+  100% {
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.35);
+  }
+  92% {
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.35);
+  }
+  93% {
+    text-shadow:
+      1.5px 0 1px rgba(255, 0, 0, 0.45),
+      -1.5px 0 1px rgba(0, 255, 255, 0.45);
+  }
+  94% {
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+  }
+}
+
+body.phosphor-green {
+  color: #33ff66 !important;
+}
+
+body.phosphor-green h1,
+body.phosphor-green h2,
+body.phosphor-green h3,
+body.phosphor-green a,
+body.phosphor-green p,
+body.phosphor-green span,
+body.phosphor-green div {
+  text-shadow: 0 0 6px rgba(51, 255, 102, 0.45);
+}
+
+body.phosphor-green .border-white {
+  border-color: #33ff66 !important;
 }
