@@ -1,21 +1,29 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
+import { type CollectionEntry, getCollection, render } from "astro:content";
 import BlogPost from "@/layouts/BlogPost.astro";
-import { render } from "astro:content";
+import { getSteamWorkshopStats } from "@/utils/steam";
 
 export async function getStaticPaths() {
   const posts = await getCollection("necesse");
+  const statsMap = await getSteamWorkshopStats(
+    posts.map((p) => p.data.workshopId),
+  );
+
   return posts.map((post) => ({
     params: { slug: post.id },
-    props: post,
+    props: {
+      post,
+      steamStats: post.data.workshopId
+        ? statsMap[post.data.workshopId]
+        : undefined,
+    },
   }));
 }
-type Props = CollectionEntry<"necesse">;
 
-const post = Astro.props;
+const { post, steamStats } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<BlogPost {...post.data}>
+<BlogPost {...post.data} steamStats={steamStats}>
   <Content />
 </BlogPost>

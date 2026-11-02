@@ -3,6 +3,7 @@ title: "Cheers!"
 description: "Cheers! - Hops farming & Brewing"
 pubDate: "Jul 28 2026"
 heroImage: "/cheers.png"
+workshopId: "3773264988"
 ---
 
 **Cheers!** is a mod for Necesse that introduces a complete hop cultivation and brewing system. Expand your farming, brew unique beverages, and gain powerful buffs for your adventures!

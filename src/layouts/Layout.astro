@@ -5,12 +5,12 @@ import Navbar from "@/components/Navbar.astro";
 import Footer from "@/components/Footer.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
 
-const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, image } = Astro.props;
 ---
 
 <html lang="en" class="!overflow-x-hidden">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead description="{description}" image="{image}" title="{title}"/>
   </head>
 
   <body class="bg-black text-white tracking-wide !overflow-x-hidden">

@@ -3,6 +3,7 @@ title: "Starred Mobs"
 description: "Breathe new life, challenge, and rewards into your Necesse world with powerful enemy and farm animal variants featuring 1 to 3 stars."
 pubDate: "Aug 2 2026"
 heroImage: "/starredmobs.png"
+workshopId: "3774383997"
 ---
 
 Breathe new life, challenge, and rewards into your Necesse world! Starred Mobs introduces powerful enemy and farm animal variants featuring 1 to 3 stars, star breeding mechanics, and boosted loot tables.

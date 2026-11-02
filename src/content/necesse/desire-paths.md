@@ -3,6 +3,7 @@ title: "Desire Paths"
 description: "Make your Necesse world feel more alive with an advanced, multi-stage natural wear-and-tear mechanic."
 pubDate: "Jul 29 2026"
 heroImage: "/desirepaths.png"
+workshopId: "3773865682"
 ---
 
 Make your Necesse world feel more alive and organically shaped by its inhabitants! 

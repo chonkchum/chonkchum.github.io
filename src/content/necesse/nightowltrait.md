@@ -3,6 +3,7 @@ title: "Night Owl Trait"
 description: "Keep your settlement's economy booming 24/7 with the new Night Owl personality that flips a settler's daily schedule."
 pubDate: "Aug 3 2026"
 heroImage: "/nightowltrait.png"
+workshopId: "3776896754"
 ---
 
 Tired of your workstations sitting idle when the sun goes down? Keep your settlement's economy booming 24/7 with the new **Night Owl** personality!

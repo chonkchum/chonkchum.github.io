@@ -1,19 +1,44 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@/components/Date.astro";
 import Layout from "@/layouts/Layout.astro";
+import { SITE_TITLE } from "@/consts";
+import type { SteamModStats } from "@/utils/steam";
 
-type Props = CollectionEntry<"blog">["data"];
+type Props = {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  heroImage?: string;
+  workshopId?: string;
+  steamStats?: SteamModStats;
+};
 
-const { title, pubDate, updatedDate, heroImage } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  heroImage,
+  workshopId,
+  steamStats,
+} = Astro.props;
 ---
 
-<Layout>
+<Layout
+  title={`${title} | ${SITE_TITLE}`}
+  description={description}
+  image={heroImage}
+>
   <article class="pb-10 grid place-items-center grid-cols-1">
     <div class="w-full grid place-items-center my-10 px-10 overflow-x-hidden">
       {
         heroImage && (
-          <img src={heroImage} alt="hero-image" class="rounded-2xl" />
+          <img
+            src={heroImage}
+            alt={title}
+            class="rounded-2xl max-h-80 object-contain border-2 border-white p-2"
+          />
         )
       }
     </div>
@@ -32,6 +57,55 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
           }
         </div>
         <h1>{title}</h1>
+
+        {
+          workshopId && (
+            <div class="not-prose my-6 p-4 border-2 border-white rounded-lg bg-white/[0.03] flex flex-col md:flex-row items-center justify-between gap-4">
+              {steamStats ? (
+                <div class="flex gap-6 text-sm">
+                  <div>
+                    <span class="text-white/60 block text-xs">SUBSCRIBERS</span>
+                    <span class="text-xl font-bold">
+                      {steamStats.subscriptions.toLocaleString("en-US")}
+                    </span>
+                  </div>
+                  <div>
+                    <span class="text-white/60 block text-xs">VIEWS</span>
+                    <span class="text-xl font-bold">
+                      {steamStats.views.toLocaleString("en-US")}
+                    </span>
+                  </div>
+                  <div>
+                    <span class="text-white/60 block text-xs">FAVORITES</span>
+                    <span class="text-xl font-bold">
+                      {steamStats.favorited.toLocaleString("en-US")}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div class="text-sm">Available on Steam Workshop</div>
+              )}
+
+              <div class="flex flex-wrap gap-3">
+                <a
+                  href={`steam://url/CommunityFilePage/${workshopId}`}
+                  class="bg-white text-black px-4 py-2 rounded font-bold text-sm hover:bg-black hover:text-white border-2 border-white transition-all"
+                >
+                  Open in Steam App
+                </a>
+                <a
+                  href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${workshopId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="px-4 py-2 rounded font-bold text-sm border-2 border-white hover:bg-white hover:text-black transition-all"
+                >
+                  Steam Web
+                </a>
+              </div>
+            </div>
+          )
+        }
+
         <hr />
       </div>
       <slot />

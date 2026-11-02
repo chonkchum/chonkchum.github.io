@@ -3,14 +3,53 @@ import { getCollection } from "astro:content";
 import BlogPostCard from "@/components/BlogPostCard.astro";
 import Section from "@/components/Section.astro";
 import Layout from "@/layouts/Layout.astro";
+import { getSteamWorkshopStats } from "@/utils/steam";
 
 const posts = (await getCollection("necesse")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const statsMap = await getSteamWorkshopStats(
+  posts.map((p) => p.data.workshopId),
+);
+
+const totalSubs = Object.values(statsMap).reduce(
+  (sum, item) => sum + item.subscriptions,
+  0,
+);
+const totalViews = Object.values(statsMap).reduce(
+  (sum, item) => sum + item.views,
+  0,
+);
+const totalFavs = Object.values(statsMap).reduce(
+  (sum, item) => sum + item.favorited,
+  0,
+);
 ---
 
-<Layout title="Necesse Mods">
+<Layout title="Necesse Mods | ChonkChum">
   <Section title="Necesse Mods">
+    <div
+      class="w-full max-w-4xl mx-auto mb-8 border-2 border-white rounded-lg p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center bg-white/[0.02]"
+    >
+      <div>
+        <div class="text-xs text-white/60">RELEASED MODS</div>
+        <div class="text-2xl font-bold">{posts.length}</div>
+      </div>
+      <div>
+        <div class="text-xs text-white/60">SUBSCRIPTIONS</div>
+        <div class="text-2xl font-bold">{totalSubs.toLocaleString("en-US")}</div>
+      </div>
+      <div>
+        <div class="text-xs text-white/60">WORKSHOP VIEWS</div>
+        <div class="text-2xl font-bold">{totalViews.toLocaleString("en-US")}</div>
+      </div>
+      <div>
+        <div class="text-xs text-white/60">FAVORITES</div>
+        <div class="text-2xl font-bold">{totalFavs.toLocaleString("en-US")}</div>
+      </div>
+    </div>
+
     <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
       {
         posts.map((post) => (
@@ -20,6 +59,10 @@ const posts = (await getCollection("necesse")).sort(
             excerpt={post.data.description}
             date={post.data.pubDate}
             collection="necesse"
+            heroImage={post.data.heroImage}
+            steamStats={
+              post.data.workshopId ? statsMap[post.data.workshopId] : undefined
+            }
           />
         ))
       }
