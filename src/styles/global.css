@@ -4,12 +4,31 @@
   font-style: normal;
   font-display: swap;
 }
+
 body {
   font-family: "VCR", monospace !important;
+  background-color: #000;
+  color: #00ff66;
 }
 
-pre,
-code {
+
+body::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 99999;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+
+h1, h2, h3, a, p {
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+pre, code {
   font-family: "VCR", monospace !important;
   font-weight: 100;
 }
@@ -28,23 +47,26 @@ code {
   width: 8px;
 }
 
-img,
-.no-selection {
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #fff;
+}
+
+img, .no-selection {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
-  -webkit-user-drag: none;
 }
 
 .hero-bg {
   z-index: -1;
   width: 100vw;
   word-wrap: break-word;
-  opacity: 0.02;
+  opacity: 0.03;
   font-size: 3rem;
   user-select: none;
 }
