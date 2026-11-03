@@ -21,6 +21,12 @@ const {
     <footer class="w-screen bottom-0 overflow-x-hidden"><Footer /></footer>
 
     <script is:inline>
+      console.log(
+        "%c<ChonkChum />%c\nDivergence: 1.048596%\nThe Organization is watching. El Psy Kongroo.",
+        "font-size:20px;font-weight:bold;color:#fff;background:#000;padding:4px 8px;border:2px solid #fff;",
+        "font-family:monospace;color:#aaa;padding-top:6px;",
+      );
+
       const konami = [
         "ArrowUp",
         "ArrowUp",
@@ -57,6 +63,36 @@ const {
           document.title = originalTitle;
         }
       });
+
+      function bindScramble() {
+        const glyphs = "01アイウエオカキクケコサシスセソ<>/_#=";
+        document.querySelectorAll("section h2").forEach((el) => {
+          if (el.dataset.scrambleBound) return;
+          el.dataset.scrambleBound = "true";
+          const orig = el.textContent;
+
+          el.addEventListener("mouseenter", () => {
+            let step = 0;
+            const interval = setInterval(() => {
+              el.textContent = orig
+                .split("")
+                .map((ch, idx) => {
+                  if (ch === " " || idx < step) return orig[idx];
+                  return glyphs[Math.floor(Math.random() * glyphs.length)];
+                })
+                .join("");
+              step += 1.5;
+              if (step >= orig.length) {
+                el.textContent = orig;
+                clearInterval(interval);
+              }
+            }, 25);
+          });
+        });
+      }
+
+      bindScramble();
+      document.addEventListener("astro:page-load", bindScramble);
     </script>
   </body>
 </html>

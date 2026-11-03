@@ -23,71 +23,47 @@ import { QUOTE, SITE_TITLE } from "@/consts";
 
       <div
         id="hero-terminal"
-        class="mt-6 w-full text-left border-2 border-white rounded-lg overflow-hidden bg-black/90 shadow-[0_0_20px_rgba(255,255,255,0.12)]"
+        class="mt-6 w-full text-left border-2 border-white rounded-lg overflow-hidden bg-black/95 cursor-text shadow-[0_0_20px_rgba(255,255,255,0.08)]"
       >
         <div
-          class="flex items-center justify-between px-4 py-1.5 bg-white/95 text-black"
+          class="flex items-center justify-between px-4 py-1.5 bg-white/95 text-black select-none"
         >
           <div class="flex space-x-2">
             <div class="w-2.5 h-2.5 rounded-full bg-black"></div>
             <div class="w-2.5 h-2.5 rounded-full bg-black"></div>
             <div class="w-2.5 h-2.5 rounded-full bg-black"></div>
           </div>
-          <span class="text-xs font-bold tracking-widest">
-            chonkchum@crt:~
+          <span id="term-header" class="text-xs font-bold tracking-widest">
+            tty1 // 1.048596
           </span>
         </div>
 
         <div class="p-4 text-xs md:text-sm">
           <div
             id="term-output"
-            class="h-44 overflow-y-auto space-y-1.5 pr-1 text-white/90"
+            class="h-48 overflow-y-auto space-y-1 pr-1 text-white/90"
           >
-            <div class="text-white/60">
-              CHONK-OS v1.048596 // CRT TERMINAL READY
-            </div>
-            <div>
-              Type <span class="underline">help</span> or click a shortcut below:
+            <div class="text-white/50">
+              chonk-arch (tty1) — type 'help' or 'ls'
             </div>
           </div>
 
           <form
             id="term-form"
-            class="mt-3 pt-2 border-t border-white/20 flex items-center gap-2"
+            class="mt-2 pt-2 border-t border-white/15 flex items-center gap-2"
           >
-            <span class="text-white font-bold shrink-0">guest@chonkchum:~$</span>
+            <span id="term-prompt" class="text-white font-bold shrink-0"
+              >chonk@arch:~$</span
+            >
             <input
               id="term-input"
               type="text"
               autocomplete="off"
+              autocapitalize="off"
               spellcheck="false"
-              placeholder="try: neofetch, beer, ficsit, bangers..."
-              class="w-full bg-transparent text-white focus:outline-none placeholder:text-white/30"
+              class="w-full bg-transparent text-white focus:outline-none caret-white"
             />
           </form>
-
-          <div class="mt-2.5 flex flex-wrap gap-1.5 text-[11px] text-white/70">
-            {
-              [
-                "help",
-                "neofetch",
-                "mods",
-                "solver",
-                "beer",
-                "bangers",
-                "crt",
-                "clear",
-              ].map((cmd) => (
-                <button
-                  type="button"
-                  data-cmd={cmd}
-                  class="term-chip px-2 py-0.5 border border-white/30 rounded hover:bg-white hover:text-black transition-all"
-                >
-                  {cmd}
-                </button>
-              ))
-            }
-          </div>
         </div>
       </div>
     </div>
@@ -95,9 +71,10 @@ import { QUOTE, SITE_TITLE } from "@/consts";
 
   <div class="md:col-span-7 flex justify-end">
     <Image
+      id="hero-avatar"
       alt={SITE_TITLE}
       src={HeroImg}
-      class="brightness-200 w-full scale-110 md:scale-100 invert origin-right"
+      class="brightness-200 w-full scale-110 md:scale-100 invert origin-right cursor-pointer"
     />
   </div>
 </section>
@@ -121,138 +98,278 @@ import { QUOTE, SITE_TITLE } from "@/consts";
 
   startBinaryBg();
 
-  function initTerminal() {
+  function initHero() {
     const form = document.getElementById("term-form");
     const input = document.getElementById("term-input");
     const output = document.getElementById("term-output");
     const terminalBox = document.getElementById("hero-terminal");
-    const chips = document.querySelectorAll(".term-chip");
+    const headerSpan = document.getElementById("term-header");
+    const avatar = document.getElementById("hero-avatar");
 
     if (!form || !input || !output || terminalBox.dataset.ready === "true")
       return;
     terminalBox.dataset.ready = "true";
 
+    terminalBox.addEventListener("click", () => {
+      const sel = window.getSelection();
+      if (!sel || sel.toString().length === 0) {
+        input.focus();
+      }
+    });
+
+    let clickCount = 0;
+    let clickTimer = null;
+    if (avatar) {
+      avatar.addEventListener("click", () => {
+        clickCount++;
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+          clickCount = 0;
+        }, 600);
+
+        if (clickCount === 3) {
+          clickCount = 0;
+          document.body.classList.add("worldline-shift");
+          const newDiv = (Math.random() * 2).toFixed(6);
+          if (headerSpan) headerSpan.textContent = `tty1 // ${newDiv}`;
+          printLine(
+            `[READING STEINER]: World line shifted to ${newDiv}%`,
+          );
+          setTimeout(() => {
+            document.body.classList.remove("worldline-shift");
+          }, 450);
+        }
+      });
+    }
+
     const history = [];
     let historyIdx = -1;
 
+    const files = {
+      "beers.cfg": [
+        "# Cheers! Mod Brewery Barrel Recipes",
+        "hellish_chili_beer = +25% All Dmg, +10 Armor, +15% Incoming Dmg",
+        "mushroom_stout     = +40 Max Mana, +15% Magic Dmg",
+        "tropical_ipa       = +20% Speed, +20% Attack Speed, +0.3 Regen",
+        "corn_beer          = +20% Mining Speed, +20% Building Speed",
+      ].join("\n"),
+      "spaghetti.log": [
+        "[WARN] Conveyor Belt Mk.6 saturation at 99.8%",
+        "[INFO] Nuclear Pasta routed to Dimensional Depot",
+        "[OK]   Pioneers-Spaghetti-Solver initialized (55 locales loaded)",
+      ].join("\n"),
+      "worldline.dat":
+        "01000101 01101100 00100000 01010000 01110011 01111001 00100000 01001011 01101111 01101110 01100111 01110010 01101111 01101111",
+      "todo.txt": [
+        "- calibrate 3D printer bed leveling",
+        "- flash Arduino固件",
+        "- fix 3-star boss spawn rate in Necesse",
+      ].join("\n"),
+    };
+
     const beers = [
-      "Grain beer (+10 Armor, +10% All Damage | +10% Incoming Damage)",
-      "Strawberry beer (+15% Speed, +20 Max Health | +10% Incoming Damage)",
-      "Hellish chili beer (+25% All Damage, +10 Armor | +15% Incoming Damage)",
-      "Mushroom stout (+40 Max Mana, +15% Magic Damage | +10% Incoming Damage)",
-      "Tropical IPA (+20% Speed, +20% Attack Speed, +0.3 Regen | +15% Incoming Damage)",
-      "Corn beer (+20% Mining Speed, +20% Building Speed | +10% Incoming Damage)",
+      "Grain beer (+10 Armor, +10% All Damage)",
+      "Strawberry beer (+15% Speed, +20 Max Health)",
+      "Hellish chili beer (+25% All Damage, +10 Armor)",
+      "Mushroom stout (+40 Max Mana, +15% Magic Damage)",
+      "Tropical IPA (+20% Speed, +20% Attack Speed)",
+      "Corn beer (+20% Mining Speed, +20% Building Speed)",
     ];
 
     const bangers = [
-      "NOW PLAYING: Linkin Park - Numb (2003) [||||||||||----]",
-      "NOW PLAYING: Daft Punk - One More Time (2000) [||||||||||||--]",
-      "NOW PLAYING: Gorillaz - Feel Good Inc. (2005) [||||||||------]",
-      "NOW PLAYING: Pendulum - Propane Nightmares (2008) [|||||||||||---]",
-      "NOW PLAYING: Darude - Sandstorm (1999) [||||||||||||||]",
-      "NOW PLAYING: Evanescence - Bring Me To Life (2003) [|||||||||-----]",
+      "Linkin Park - Faint (2003)",
+      "Daft Punk - Harder, Better, Faster, Stronger (2001)",
+      "Gorillaz - Clint Eastwood (2001)",
+      "Pendulum - Slam (2005)",
+      "The Prodigy - Omen (2009)",
+      "Franz Ferdinand - Take Me Out (2004)",
     ];
 
-    const commands = {
-      help: () =>
-        [
-          "Available commands:",
-          "  neofetch - Display ChonkChum system info",
-          "  mods     - Necesse Steam Workshop mods",
-          "  solver   - Pioneers' Spaghetti Solver",
-          "  beer     - Drink a random brew from Cheers! mod",
-          "  bangers  - Play a random pre-2010 banger",
-          "  ficsit   - FICSIT Inc. pioneer status check",
-          "  steins   - Check World Line Divergence Meter",
-          "  matrix   - Overclock binary background",
-          "  crt      - Toggle CRT scanlines",
-          "  clear    - Clear terminal",
-        ].join("<br/>"),
-      neofetch: () =>
-        [
-          "  [CHONK-OS]   USER: ChonkChum",
-          "  +--------+   ROLE: Gamer, Developer & Maker",
-          "  |  >_    |   CODE: Python, Astro, Godot, Bash, HTML",
-          "  |        |   LAB:  3D Printing, Arduino, DIY, Docker",
-          "  +--------+   OS:   Linux // CRT Phosphor Display",
-        ].join("<br/>"),
-      mods: () =>
-        'Necesse Mods: Cheers!, Desire Paths, Night Owl Trait, Starred Mobs. <a href="/necesse" class="underline font-bold">Open /necesse &rarr;</a>',
-      solver: () =>
-        'Pioneers\' Spaghetti Solver: Godot factory planner for Satisfactory. <a href="/spaghetti-solver" class="underline font-bold">Open /spaghetti-solver &rarr;</a>',
-      beer: () => {
-        const pick = beers[Math.floor(Math.random() * beers.length)];
-        return `[CHEERS! BREWERY]: You drank ${pick}. Drink responsibly!`;
-      },
-      bangers: () => {
-        const track = bangers[Math.floor(Math.random() * bangers.length)];
-        return `[WINAMP v2.91]: ${track}`;
-      },
-      ficsit: () =>
-        "[FICSIT INC.]: Spaghetti levels critical! Please use Pioneers' Spaghetti Solver before feeding Nuclear Pasta into the AWESOME Sink.",
-      steins: () => {
-        const div = (Math.random() * 2).toFixed(6);
-        return `[DIVERGENCE METER]: ${div}% // The Organization is watching. El Psy Kongroo.`;
-      },
-      elpsykongroo: () =>
-        "Ah, it's me. The Organization has infiltrated the terminal. El Psy Kongroo.",
-      matrix: () => {
-        const hero_bg = document.querySelector(".hero-bg-animate");
-        if (binarySpeed === 300) {
-          binarySpeed = 60;
-          if (hero_bg) hero_bg.style.opacity = "0.14";
-          startBinaryBg();
-          return "Binary background OVERCLOCKED (60ms).";
-        } else {
-          binarySpeed = 300;
-          if (hero_bg) hero_bg.style.opacity = "0.02";
-          startBinaryBg();
-          return "Binary background restored to normal (300ms).";
-        }
-      },
-      crt: () => {
-        const isOff = document.body.classList.toggle("crt-off");
-        return isOff ? "CRT scanlines: OFF" : "CRT scanlines: ON";
-      },
-      sudo: () =>
-        "Nice try! Incident reported to a 3-Star Night Owl settler.",
+    const routes = {
+      "~": "/",
+      home: "/",
+      necesse: "/necesse",
+      mods: "/necesse",
+      blog: "/blog",
+      solver: "/spaghetti-solver",
+      "spaghetti-solver": "/spaghetti-solver",
     };
+
+    const availableCmds = [
+      "help",
+      "ls",
+      "cat",
+      "cd",
+      "pwd",
+      "whoami",
+      "uname",
+      "uptime",
+      "neofetch",
+      "brew",
+      "bangers",
+      "ficsit",
+      "steins",
+      "matrix",
+      "crt",
+      "history",
+      "clear",
+    ];
 
     function printLine(html, isCmd = false) {
       const div = document.createElement("div");
       div.className = isCmd
-        ? "text-white font-bold mt-2"
-        : "text-white/85 whitespace-pre-wrap";
+        ? "text-white font-bold mt-1.5"
+        : "text-white/80 whitespace-pre-wrap";
       div.innerHTML = html;
       output.appendChild(div);
       output.scrollTop = output.scrollHeight;
     }
 
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
     function runCommand(raw) {
       const clean = raw.trim();
-      const cmd = clean.toLowerCase();
-      if (!cmd) return;
+      if (!clean) return;
 
       history.push(clean);
       historyIdx = history.length;
-      printLine(`guest@chonkchum:~$ ${clean.replace(/</g, "&lt;")}`, true);
+      printLine(`chonk@arch:~$ ${escapeHtml(clean)}`, true);
 
-      if (cmd === "clear") {
-        output.innerHTML = "";
-        return;
-      }
+      const parts = clean.split(/\s+/);
+      const cmd = parts[0].toLowerCase();
+      const arg = parts.slice(1).join(" ");
 
-      if (cmd.startsWith("sudo ")) {
-        printLine(commands.sudo());
-        return;
-      }
-
-      if (commands[cmd]) {
-        printLine(commands[cmd]());
-      } else {
-        printLine(
-          `Command not found: ${cmd.replace(/</g, "&lt;")}. Type <span class="underline">help</span>.`,
-        );
+      switch (cmd) {
+        case "clear":
+          output.innerHTML = "";
+          break;
+        case "help":
+          printLine(
+            [
+              "core:   ls, cat <file>, cd <dir>, pwd, whoami, uname, history, clear",
+              "system: neofetch, crt, matrix, steins",
+              "extras: brew, bangers, ficsit",
+            ].join("\n"),
+          );
+          break;
+        case "ls":
+          printLine(
+            "drwxr-xr-x  necesse/  blog/  spaghetti-solver/\n-rw-r--r--  " +
+              Object.keys(files).join("  "),
+          );
+          break;
+        case "pwd":
+          printLine("/home/chonkchum");
+          break;
+        case "whoami":
+          printLine("chonkchum — gamer, developer & maker");
+          break;
+        case "uname":
+          printLine("Linux chonk-arch 6.12.4-arch1-1 x86_64 GNU/Linux");
+          break;
+        case "uptime":
+          printLine(
+            `up ${Math.floor(performance.now() / 1000)}s, 1 user, load average: 0.08, 0.03, 0.01`,
+          );
+          break;
+        case "cat":
+          if (!arg) {
+            printLine("usage: cat <filename>");
+          } else if (files[arg]) {
+            printLine(escapeHtml(files[arg]));
+          } else {
+            printLine(`cat: ${escapeHtml(arg)}: No such file or directory`);
+          }
+          break;
+        case "cd":
+          if (!arg || arg === "~" || arg === "/") {
+            printLine("already in /home/chonkchum");
+          } else {
+            const target = arg.replace(/\/+$/, "").toLowerCase();
+            if (routes[target]) {
+              printLine(`navigating to ${routes[target]}...`);
+              setTimeout(() => {
+                window.location.href = routes[target];
+              }, 250);
+            } else {
+              printLine(`cd: ${escapeHtml(arg)}: No such directory`);
+            }
+          }
+          break;
+        case "neofetch":
+          printLine(
+            [
+              "   /\\      chonk@arch",
+              "  /  \\     ----------",
+              " / /\\ \\    OS: Arch Linux x86_64",
+              "/ /__\\ \\   Stack: Python, Astro, Godot, Bash",
+              "\\/_/\\_\\/   Lab: 3D Printing, Arduino, Docker",
+            ].join("\n"),
+          );
+          break;
+        case "brew":
+        case "beer":
+          printLine(
+            `[Brewery Barrel]: ${beers[Math.floor(Math.random() * beers.length)]}`,
+          );
+          break;
+        case "bangers":
+          printLine(
+            `[mpd]: playing "${bangers[Math.floor(Math.random() * bangers.length)]}"`,
+          );
+          break;
+        case "ficsit":
+          printLine(
+            "FICSIT Tip #42: Do not sink Somersloops. Use 'cd solver' to fix your factory.",
+          );
+          break;
+        case "steins":
+        case "elpsykongroo": {
+          const div = (Math.random() * 2).toFixed(6);
+          if (headerSpan) headerSpan.textContent = `tty1 // ${div}`;
+          printLine(`Divergence: ${div}% — El Psy Kongroo.`);
+          break;
+        }
+        case "matrix": {
+          const hero_bg = document.querySelector(".hero-bg-animate");
+          if (binarySpeed === 300) {
+            binarySpeed = 50;
+            if (hero_bg) hero_bg.style.opacity = "0.15";
+            startBinaryBg();
+            printLine("clock_freq: 50ms (overclocked)");
+          } else {
+            binarySpeed = 300;
+            if (hero_bg) hero_bg.style.opacity = "0.02";
+            startBinaryBg();
+            printLine("clock_freq: 300ms (default)");
+          }
+          break;
+        }
+        case "crt": {
+          const isOff = document.body.classList.toggle("crt-off");
+          const navBtn = document.getElementById("crt-toggle-btn");
+          if (navBtn) navBtn.textContent = isOff ? "[CRT: OFF]" : "[CRT: ON]";
+          printLine(`crt_shader: ${isOff ? "disabled" : "enabled"}`);
+          break;
+        }
+        case "history":
+          printLine(
+            history.map((h, i) => `  ${i + 1}  ${escapeHtml(h)}`).join("\n"),
+          );
+          break;
+        case "sudo":
+          printLine("chonk is not in the sudoers file. This incident will be reported.");
+          break;
+        case "rm":
+          printLine("rm: cannot remove '/': Permission denied (nice try)");
+          break;
+        default:
+          printLine(`bash: ${escapeHtml(cmd)}: command not found`);
       }
     }
 
@@ -276,18 +393,28 @@ import { QUOTE, SITE_TITLE } from "@/consts";
           historyIdx = history.length;
           input.value = "";
         }
+      } else if (e.key === "Tab") {
+        e.preventDefault();
+        const val = input.value.trim();
+        const parts = val.split(/\s+/);
+        if (parts.length === 1) {
+          const match = availableCmds.find((c) => c.startsWith(parts[0]));
+          if (match) input.value = match + " ";
+        } else if (parts[0] === "cat") {
+          const fileMatch = Object.keys(files).find((f) =>
+            f.startsWith(parts[1] || ""),
+          );
+          if (fileMatch) input.value = `cat ${fileMatch}`;
+        } else if (parts[0] === "cd") {
+          const dirMatch = Object.keys(routes).find((r) =>
+            r.startsWith(parts[1] || ""),
+          );
+          if (dirMatch) input.value = `cd ${dirMatch}`;
+        }
       }
-    });
-
-    chips.forEach((chip) => {
-      chip.addEventListener("click", () => {
-        const cmd = chip.getAttribute("data-cmd");
-        if (cmd) runCommand(cmd);
-        input.focus();
-      });
     });
   }
 
-  initTerminal();
-  document.addEventListener("astro:page-load", initTerminal);
+  initHero();
+  document.addEventListener("astro:page-load", initHero);
 </script>

@@ -1,6 +1,5 @@
 ---
 import { SITE_TITLE } from "@/consts";
-
 const today = new Date();
 ---
 
@@ -13,8 +12,34 @@ const today = new Date();
   id="footer"
   class="w-full grid relative place-items-center text-center py-4 bg-white/[0.001]"
 >
-  <div class="px-10 py-3 border-2 border-white">
+  <div
+    id="footer-box"
+    class="px-10 py-3 border-2 border-white cursor-pointer select-none hover:bg-white hover:text-black transition-all"
+  >
     &copy; {today.getFullYear()}
     {SITE_TITLE}. All rights reserved.
   </div>
 </section>
+
+<script is:inline>
+  function initFooter() {
+    const box = document.getElementById("footer-box");
+    if (!box || box.dataset.bound) return;
+    box.dataset.bound = "true";
+    const defaultText = box.innerHTML;
+    let secretMode = false;
+
+    box.addEventListener("click", () => {
+      secretMode = !secretMode;
+      if (secretMode) {
+        const up = Math.floor(performance.now() / 1000);
+        box.textContent = `SYS_UPTIME: ${up}s // WORLD_LINE: 1.048596% // EL PSY KONGROO`;
+      } else {
+        box.innerHTML = defaultText;
+      }
+    });
+  }
+
+  initFooter();
+  document.addEventListener("astro:page-load", initFooter);
+</script>

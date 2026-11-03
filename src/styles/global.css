@@ -7,7 +7,7 @@
 
 body {
   font-family: "VCR", monospace !important;
-  animation: crt-text-flicker 5s infinite;
+  animation: crt-text-flicker 6s infinite;
 }
 
 pre,
@@ -68,9 +68,9 @@ body:not(.crt-off)::after {
     linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
     linear-gradient(
       90deg,
-      rgba(255, 0, 0, 0.04),
+      rgba(255, 0, 0, 0.035),
       rgba(0, 255, 0, 0.015),
-      rgba(0, 0, 255, 0.04)
+      rgba(0, 0, 255, 0.035)
     );
   background-size:
     100% 4px,
@@ -78,8 +78,8 @@ body:not(.crt-off)::after {
   z-index: 99999;
   pointer-events: none;
   animation:
-    crt-scanlines 0.8s linear infinite,
-    crt-flicker 0.15s infinite;
+    crt-scanlines 0.9s linear infinite,
+    crt-flicker 0.18s infinite;
 }
 
 body:not(.crt-off)::before {
@@ -89,16 +89,40 @@ body:not(.crt-off)::before {
   left: 0;
   right: 0;
   top: -20vh;
-  height: 18vh;
+  height: 16vh;
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.045) 50%,
+    rgba(255, 255, 255, 0.04) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   z-index: 99998;
   pointer-events: none;
-  animation: crt-beam 7s linear infinite;
+  animation: crt-beam 8s linear infinite;
+}
+
+body.worldline-shift {
+  filter: invert(1) contrast(1.4);
+}
+
+body.phosphor-green {
+  color: #33ff66 !important;
+}
+
+body.phosphor-green h1,
+body.phosphor-green h2,
+body.phosphor-green h3,
+body.phosphor-green a,
+body.phosphor-green p,
+body.phosphor-green span,
+body.phosphor-green div,
+body.phosphor-green input {
+  color: #33ff66;
+  text-shadow: 0 0 6px rgba(51, 255, 102, 0.45);
+}
+
+body.phosphor-green .border-white {
+  border-color: #33ff66 !important;
 }
 
 @keyframes crt-scanlines {
@@ -125,48 +149,30 @@ body:not(.crt-off)::before {
 
 @keyframes crt-flicker {
   0% {
-    opacity: 0.92;
+    opacity: 0.93;
   }
   50% {
-    opacity: 0.84;
+    opacity: 0.86;
   }
   100% {
-    opacity: 0.95;
+    opacity: 0.96;
   }
 }
 
 @keyframes crt-text-flicker {
   0%,
   100% {
-    text-shadow: 0 0 3px rgba(255, 255, 255, 0.35);
-  }
-  92% {
-    text-shadow: 0 0 3px rgba(255, 255, 255, 0.35);
-  }
-  93% {
-    text-shadow:
-      1.5px 0 1px rgba(255, 0, 0, 0.45),
-      -1.5px 0 1px rgba(0, 255, 255, 0.45);
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
   }
   94% {
-    text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
   }
-}
-
-body.phosphor-green {
-  color: #33ff66 !important;
-}
-
-body.phosphor-green h1,
-body.phosphor-green h2,
-body.phosphor-green h3,
-body.phosphor-green a,
-body.phosphor-green p,
-body.phosphor-green span,
-body.phosphor-green div {
-  text-shadow: 0 0 6px rgba(51, 255, 102, 0.45);
-}
-
-body.phosphor-green .border-white {
-  border-color: #33ff66 !important;
+  95% {
+    text-shadow:
+      1.5px 0 1px rgba(255, 0, 0, 0.4),
+      -1.5px 0 1px rgba(0, 255, 255, 0.4);
+  }
+  96% {
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.15);
+  }
 }

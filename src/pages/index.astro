@@ -6,15 +6,18 @@ import Section from "@/components/Section.astro";
 import BlogPostCard from "@/components/BlogPostCard.astro";
 import Layout from "@/layouts/Layout.astro";
 import { KNOWN_TECH, ABOUT_ME } from "@/consts";
+import { getSteamWorkshopStats } from "@/utils/steam";
 
-// 1. Pobieramy wpisy z obu kolekcji
 const blogPosts = await getCollection("blog");
 const necessePosts = await getCollection("necesse");
 
-// 2. Łączymy je, sortujemy od najnowszego i ucinamy do 4 sztuk (możesz zmienić liczbę w .slice)
+const statsMap = await getSteamWorkshopStats(
+  necessePosts.map((p) => p.data.workshopId),
+);
+
 const latestPosts = [...blogPosts, ...necessePosts]
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4); 
+  .slice(0, 4);
 ---
 
 <Layout title="ChonkChum">
@@ -42,7 +45,9 @@ const latestPosts = [...blogPosts, ...necessePosts]
         class="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6"
       >
         <div>
-          <h3 class="text-2xl font-bold mb-2">{`> Pioneers' Spaghetti Solver`}</h3>
+          <h3 class="text-2xl font-bold mb-2">
+            {`> Pioneers' Spaghetti Solver`}
+          </h3>
           <p class="text-white/80 text-sm">
             Open-source production calculator and factory planner for
             Satisfactory with full 1.0+ item database and 50+ languages.
@@ -57,10 +62,7 @@ const latestPosts = [...blogPosts, ...necessePosts]
       </div>
     </div>
   </Section>
-  <Section
-    title="Latest Posts"
-    className={"bg-gradient-to-b from-black/70 from-[5%] to-black via-black"}
-  >
+  <Section title="Latest Posts">
     <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
       {
         latestPosts.map((post) => (
@@ -69,7 +71,13 @@ const latestPosts = [...blogPosts, ...necessePosts]
             title={post.data.title}
             excerpt={post.data.description}
             date={post.data.pubDate}
-            collection={post.collection} // 3. Przekazujemy nazwę kolekcji do karty!
+            collection={post.collection}
+            heroImage={post.data.heroImage}
+            steamStats={
+              post.collection === "necesse" && post.data.workshopId
+                ? statsMap[post.data.workshopId]
+                : undefined
+            }
           />
         ))
       }
